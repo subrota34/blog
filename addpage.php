@@ -1,31 +1,9 @@
 <?php include 'inc/header.php'; ?>
 <?php include 'inc/sidebar.php'; ?>
-<style type="text/css"> 
-	.actiondel{
-		margin-left: 10px;
-	}
-	.actiondel a{
-		  border: 1px solid #ddd;
-		  color: #444;
-		  cursor: pointer;
-		  font-size: 20px;
-		  padding: 2px 10px;
-		  font-weight: normal;
-		  background: #ddd;
-	}
-</style>
-<?php 
-	if(!isset($_GET['pageid']) || $_GET['pageid'] == NULL){
-		echo "<script type='text/javascript'> window.location ='index.php'; </script>";
-		//header("Location: catlist.php");
-	}else{
-		$id = $_GET['pageid'];
-	}
-?>
         <div class="grid_10">
 		
             <div class="box round first grid">
-                <h2>Edit Page</h2>
+                <h2>Add New Page</h2>
 				<?php  
 					if($_SERVER['REQUEST_METHOD'] == 'POST'){
 						$name = mysqli_real_escape_string($db->link, $_POST['name']);
@@ -35,24 +13,19 @@
 						if($name == "" || $body == ""){
 							echo "<span class='error'>Feild must not be empty ! </span>";
 							}else{
-							$query = "UPDATE tbl_page SET name = '$name', body = '$body' WHERE id = '$id' ";
-							$updated_row = $db->update($query);;
-							if ($updated_row) {
-							 echo "<span class='success'>Page updated Successfully.
+							$query = "INSERT INTO tbl_page(name, body) 
+							VALUES('$name', '$body')";
+							$inserted_rows = $db->insert($query);
+							if ($inserted_rows) {
+							 echo "<span class='success'>Page Create Successfully.
 							 </span>";
 							}else {
-							 echo "<span class='error'>Page Not updated !</span>";
+							 echo "<span class='error'>Page Not Created !</span>";
 							}
 						}
 					}
 				?>
-                <div class="block">      
-				<?php 
-					$pagequery = "SELECT * FROM tbl_page WHERE id = '$id' ";
-					$pagedetails = $db->select($pagequery);
-					if($pagedetails){
-						while($result = $pagedetails->fetch_assoc()){
-				?>           
+                <div class="block">               
                  <form action="" method="post">
                     <table class="form">
                        
@@ -61,7 +34,7 @@
                                 <label>Name</label>
                             </td>
                             <td>
-                                <input type="text"  name="name" value="<?php echo $result['name']; ?>" class="medium" />
+                                <input type="text"  name="name" placeholder="Enter Post Title..." class="medium" />
                             </td>
                         </tr>
                      
@@ -70,22 +43,17 @@
                                 <label>Content</label>
                             </td>
                             <td>
-                                <textarea name="body" class="tinymce"><?php echo $result['body']; ?></textarea>
+                                <textarea name="body" class="tinymce"></textarea>
                             </td>
                         </tr>
 						<tr>
                             <td></td>
                             <td>
-                                <input type="submit" name="submit" Value="Update" />
-								<span class="actiondel"><a onclick="return confirm('Are you sure?')" href="deletepage.php?delpage=<?php echo $result['id']; ?>">Delete</a></span>
+                                <input type="submit" name="submit" Value="Save" />
                             </td>
                         </tr>
                     </table>
                     </form>
-					<?php 
-							}
-						}
-					?>
                 </div>
             </div>
         </div>
